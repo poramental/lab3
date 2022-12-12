@@ -8,7 +8,7 @@ import lombok.Getter;
 
 @Component
 @Getter
-public class GausCommand {
+public class GaussCommand {
     
     private final String commandName = "/gauss";
 

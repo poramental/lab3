@@ -17,7 +17,8 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 import com.lab3.lab3.botapi.commands.BotStartCommand;
-import com.lab3.lab3.botapi.commands.GausCommand;
+import com.lab3.lab3.botapi.commands.GaussCommand;
+import com.lab3.lab3.botapi.commands.ZeidelCommand;
 import com.lab3.lab3.botapi.config.MathBotConfig;
 
 import lombok.Setter;
@@ -31,7 +32,7 @@ public class MathBot extends TelegramLongPollingBot{
     String botName;
     String botToken;
     TelegramFacade telegramFacade;
-    MathBotConfig config;
+    
 
     private List<BotCommand> listOfCommands = new ArrayList<>();
 
@@ -42,7 +43,8 @@ public class MathBot extends TelegramLongPollingBot{
         this.botName = config.getBotName();
         this.botToken = config.getBotToken();
         this.listOfCommands.add(new BotStartCommand().getBotCommand());
-        this.listOfCommands.add(new GausCommand().getBotCommand());
+        this.listOfCommands.add(new GaussCommand().getBotCommand());
+        this.listOfCommands.add(new ZeidelCommand().getBotCommand());
         try{
             execute(new SetMyCommands(this.listOfCommands, new BotCommandScopeDefault(),null));
             

@@ -4,9 +4,9 @@ import com.lab3.lab3.labapi.Expression;
 import com.lab3.lab3.labapi.Matrix;
 import com.lab3.lab3.labapi.exceptions.GaussException;
 
-public class Gaus {
+public class Gauss {
     
-    public static double[] decide(Expression expr) throws GaussException{
+    public static double[] solve(Expression expr) throws GaussException{
         int n = expr.getMatrixOfCoefficents().getVerticalLength();
         Matrix a = expr.getMatrixOfCoefficents();
         Matrix y = expr.getResponseMatrix();
@@ -20,7 +20,7 @@ public class Gaus {
 
             for(int j = k + 1; j < n; j++){
                     a.setElement(k, j, a.getElement(k, j) / a.getElement(k, k) );
-                System.out.println("ds");
+               
                 }
         
             
@@ -34,8 +34,10 @@ public class Gaus {
             }
 
             k++;
+            
+            
         }
-
+        
         for(int i = 0; i < y.getHorizontalLength(); i++){
             x[i] = y.getElement(0, i);
         }
@@ -48,7 +50,10 @@ public class Gaus {
             
         }
 
+        
         return x;
+        
+        
 
     }
 

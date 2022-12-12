@@ -11,16 +11,16 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import com.lab3.lab3.botapi.commands.BotStartCommand;
-import com.lab3.lab3.botapi.commands.GausCommand;
+import com.lab3.lab3.botapi.commands.GaussCommand;
+import com.lab3.lab3.botapi.commands.ZeidelCommand;
 import com.lab3.lab3.botapi.state.StateCache;
 import com.lab3.lab3.botapi.state.States;
 import com.lab3.lab3.entities.AppUser;
 import com.lab3.lab3.labapi.Expression;
 import com.lab3.lab3.labapi.exceptions.ExpressionParseException;
 import com.lab3.lab3.labapi.exceptions.GaussException;
-import com.lab3.lab3.labapi.gauss.Gaus;
-
-
+import com.lab3.lab3.labapi.zeidel.Zeidel;
+import com.lab3.lab3.labapi.gauss.Gauss;
 
 @Component
 public class MessageHandler {
@@ -28,8 +28,10 @@ public class MessageHandler {
     BotStartCommand startCommand;
 
     @Autowired
-    GausCommand gausCommand;
+    GaussCommand gausCommand;
 
+    @Autowired
+    ZeidelCommand zeidelCommand;
 
     public BotApiMethod<?> handle(Update update, StateCache cache){
         var messageFromUser = update.getMessage();
@@ -47,17 +49,25 @@ public class MessageHandler {
         if(Objects.equals(messageFromUser.getText(), gausCommand.getCommandName())){
             
             sendmessage.setText("Введите своё уравнение.");
-            appUser.setUserState(States.GETTINGEXPRESSION);
+            appUser.setUserState(States.GETTINGGAUSSEXPRESSION);
             cache.add(userId, appUser);
             return sendmessage;
         }
 
-        if(cache.getStateById(userId) == States.GETTINGEXPRESSION){
+        if(Objects.equals(messageFromUser.getText(),zeidelCommand.getCommandName() )){
+            sendmessage.setText("Введите своё уравнение.");
+            appUser.setUserState(States.GETTINGZEIDELEXPRESSION);
+            cache.add(userId, appUser);
+            return sendmessage;
+        }
+
+
+        if(cache.getStateById(userId) == States.GETTINGGAUSSEXPRESSION){
             try{
                 Expression expr = new Expression();
                 expr.parseExpression(messageFromUser.getText());
                 
-                double[] x = Gaus.decide(expr);
+                double[] x = Gauss.solve(expr);
                 String textToSend = "";
                 int i = 1;
                 for(double d : x){
@@ -85,6 +95,37 @@ public class MessageHandler {
             }
             
             
+        }
+
+        if(cache.getStateById(userId) == States.GETTINGZEIDELEXPRESSION){
+            try{
+                Expression expr = new Expression();
+                expr.parseExpression(messageFromUser.getText());
+                
+                double[] x = Zeidel.solve(expr);
+                String textToSend = "";
+                int i = 1;
+                for(double d : x){
+                    textToSend += "x"+i +" = "+ d+ "\n";
+                    i++;
+                
+                }
+                
+                textToSend += "Ваши ответы 👍";
+                sendmessage.setText(textToSend);
+                cache.delete(userId);
+                return sendmessage;
+            
+            }catch(ExpressionParseException e){
+                sendmessage.setText(e.getMessage());
+                return sendmessage;
+            }
+            catch(Exception e){
+                sendmessage.setText("ошибка(попробуйте заменить запятые на точку,а знаки тире на знак минуса).");
+                cache.delete(userId);
+                e.printStackTrace();
+                return sendmessage;
+            }
         }
 
         return null;

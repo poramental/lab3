@@ -20,8 +20,8 @@ public class ApplicationConfig {
 
    
     @Bean
-    public MathBot springWebhookBot() throws TelegramApiException {
-        MathBot bot = new MathBot( telegramFacade, botConfig);
+    public MathBot telegrambot() throws TelegramApiException {
+        MathBot bot = new MathBot(telegramFacade, botConfig);
         bot.botConnect();
 
         return bot;

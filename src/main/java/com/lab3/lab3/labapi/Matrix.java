@@ -143,5 +143,18 @@ public class Matrix {
             return tmpMatrix;
         }
     }
+
+    public static double thirdNorm(Matrix matrix){
+        double sum = 0;
+        for(int i = 0; i < matrix.getHorizontalLength(); i++){
+            for(int j = 0; j < matrix.getVerticalLength();j++){
+                sum += Math.pow(matrix.getElement(i, j), 2);
+            }
+        }
+        return Math.sqrt(sum);
+    }
 }
+
+
+
 class NotEqualLengthsOfMatrixException extends Exception {}
